@@ -1,26 +1,26 @@
 const { AuthenticationError } = require('apollo-server');
 
-const Post = require('../../models/Post');
+const Topic = require('../../models/Topic');
 const checkAuth = require('../../util/check-auth')
 
 module.exports = {
     Query: {
-        async getPosts(){
+        async getTopics(){
             try{
-                const posts = await Post.find().sort({createdAt: -1});
-                return posts;
+                const topics = await Topic.find().sort({createdAt: -1});
+                return topics;
             } catch(err){
                 throw new Error(err);
             }
         },
-        async getPost( _, { postId }) {
+        async getTopic( _, { topicId }) {
             try{
-                const post = await Post.findById(postId);
-                if(post){
-                    return post;
+                const topic = await Topic.findById(topicId);
+                if(topic){
+                    return topic;
                 }
                 else {
-                    throw new Error('Post not found')
+                    throw new Error('Topic not found')
                 }
             } catch(err) {
                 throw new Error(err)
@@ -28,12 +28,12 @@ module.exports = {
         }
     },
     Mutation: {
-        async createPost(_, { body }, context){
+        async createTopic(_, { body }, context){
             const user = checkAuth(context);
             console.log(user)
 
             // henceforth after checks this means there is a valid user
-            const newPost = new Post({
+            const newTopic = new Topic({
                 body,
                 user: user.indexOf,
                 username: user.username,
@@ -41,19 +41,19 @@ module.exports = {
             }
             )
 
-            const post = await newPost.save();
+            const topic = await newTopic.save();
 
-            return post;
+            return topic;
 
         },
-        async deletePost(_, { postId }, context){
+        async deleteTopic(_, { topicId }, context){
             const user = checkAuth(context);
 
             try{
-                const post = await Post.findById(postId)
-                if(user.username === post.username){
-                    await post.delete();
-                    return 'Post deleted successfully'
+                const topic = await Topic.findById(topicId)
+                if(user.username === topic.username){
+                    await topic.delete();
+                    return 'Topic deleted successfully'
                 } else {
                     throw new AuthenticationError('Action not allowed')
                 }

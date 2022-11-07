@@ -1,6 +1,6 @@
 const { model, Schema } = require('mongoose');
 
-// graphql layer will say what is and isn't required
+
 const userSchema = new Schema({
     username: String,
     password: String,
